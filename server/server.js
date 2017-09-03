@@ -1,3 +1,4 @@
+const _ = require('lodash');
 var express = require('express');
 var bodyParser = require('body-parser');
 var {ObjectID} = require('mongodb');
@@ -65,7 +66,37 @@ app.delete('/todos/:id', (req, res) => {
   }).catch((e) => {
     res.status(404).send(e);
   });
-})
+});
+
+// Setting route PATCH /todos/id to find and update by id route
+app.patch('/todos/:id', (req, res) => {
+  var id = req.params.id;
+  var body = _.pick(req.body, ['text', 'completed']);
+
+  console.log("inside patch");
+
+  if (!ObjectID.isValid(id)) {
+    return res.status(404).send();
+  }
+
+  if (_.isBoolean(body.completed) && body.completed) {
+    body.completed = true;
+    console.log("inside completed true");
+  } else {
+    body.completed = false;
+    body.completedAt = null;
+  }
+
+  Todo.findByIdAndUpdate(id, {$set: body}, {new: true}).then((todo) => {
+    if (!todo) {
+      return res.status(404).send();
+    }
+
+    res.send({todo});
+  }).catch((e) => {
+    res.status(400).send(e);
+  });
+});
 
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);
