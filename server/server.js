@@ -73,7 +73,6 @@ app.patch('/todos/:id', (req, res) => {
   var id = req.params.id;
   var body = _.pick(req.body, ['text', 'completed']);
 
-  console.log("inside patch");
 
   if (!ObjectID.isValid(id)) {
     return res.status(404).send();
@@ -81,7 +80,6 @@ app.patch('/todos/:id', (req, res) => {
 
   if (_.isBoolean(body.completed) && body.completed) {
     body.completed = true;
-    console.log("inside completed true");
   } else {
     body.completed = false;
     body.completedAt = null;
