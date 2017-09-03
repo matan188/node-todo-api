@@ -49,6 +49,24 @@ app.get('/todos/:id', (req, res) => {
   });
 });
 
+// Setting route DELETE todos/id to find and delete by ID route
+app.delete('/todos/:id', (req, res) => {
+  var id = req.params.id;
+
+  if (!ObjectID.isValid(id)) {
+    return res.status(404).send();
+  }
+
+  Todo.findByIdAndRemove(id).then((todo) => {
+    if (!todo) {
+      return res.status(404).send();
+    }
+    res.send({todo});
+  }).catch((e) => {
+    res.status(404).send(e);
+  });
+})
+
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);
 });
